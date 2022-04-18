@@ -44,7 +44,8 @@ export class MidiMapping {
             0x5F: "0SearchForward"
         },
         0xB0: {
-            0x21: "0JogEncoder",
+            0x21: "0JogEncoderUntouched",
+            0x22: "0JogEncoderTouched",
             0x00: "0TempoMsb",
             0x20: "0TempoLsb",
             0x04: "0GainMsb",
@@ -89,7 +90,8 @@ export class MidiMapping {
             0x5F: "1SearchForward"
         },
         0xB1: {
-            0x21: "1JogEncoder",
+            0x21: "1JogEncoderUntouched",
+            0x22: "1JogEncoderTouched",
             0x00: "1TempoMsb",
             0x20: "1TempoLsb",
             0x04: "1GainMsb",
