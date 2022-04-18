@@ -4,7 +4,6 @@ import { DeckFineMidiControl } from "@controls/deckFineMidiControl";
 import { DeckButton } from "@controls/deckButton";
 import { toggleControl, activate, makeLedConnection, clamp, setLed } from "@/utils";
 import { MidiMapping } from "./midiMapping";
-import { tolerance } from "./pioneer-ddj1000";
 
 export class Deck {
     public readonly index: number;
@@ -30,7 +29,6 @@ export class Deck {
             new DeckButton(this.index, "Sync", {
                 onPressed: () => {
                     this.activate("beatsync");
-                    this.updateRateTakeoverLeds();
                 }
             }),
             new DeckButton(this.index, "Pfl", {
@@ -40,16 +38,21 @@ export class Deck {
             }),
 
             // Loop
-            new DeckButton(this.index, "Hotcue1", {
+            new DeckButton(this.index, "LoopButton", {
                 onPressed: () => {
                     this.activate(`beatloop_${this.getValue("beatloop_size")}_toggle`);
                 }
             }),
 
             // Loop size
-            new DeckButton(this.index, "LoopEncoder", {
-                onNewValue: value => {
-                    this.activate(value > 0x40 ? "loop_halve" : "loop_double");
+            new DeckButton(this.index, "LoopIn", {
+                onPressed: () => {
+                    this.activate("loop_halve");
+                }
+            }),
+            new DeckButton(this.index, "LoopOut", {
+                onPressed: () => {
+                    this.activate("loop_double");
                 }
             }),
 
@@ -91,24 +94,24 @@ export class Deck {
             }),
 
             // Beatjump
-            new DeckButton(this.index, "Hotcue6", {
+            new DeckButton(this.index, "BeatjumpBackward", {
                 onPressed: () => {
                     this.activate("beatjump_backward");
                 }
             }),
-            new DeckButton(this.index, "Hotcue7", {
+            new DeckButton(this.index, "BeatjumpForward", {
                 onPressed: () => {
                     this.activate("beatjump_forward");
                 }
             }),
 
             // Beatjump size
-            new DeckButton(this.index, "LoopIn", {
+            new DeckButton(this.index, "SearchBackward", {
                 onPressed: () => {
                     this.modifyAndClampBeatjumpSize(0.5);
                 }
             }),
-            new DeckButton(this.index, "LoopOut", {
+            new DeckButton(this.index, "SearchForward", {
                 onPressed: () => {
                     this.modifyAndClampBeatjumpSize(2);
                 }
@@ -128,14 +131,14 @@ export class Deck {
             new DeckMidiControl(this.index, "JogEncoderTouched", false, {
                 onNewValue: value => {
                     if (engine.isScratching(this.channel)) {
-                        engine.scratchTick(this.channel, value > 0x40 ? -1 : 1);
+                        engine.scratchTick(this.channel, value - 0x40);
                     }
                 }
             }),
             new DeckMidiControl(this.index, "JogEncoderUntouched", false, {
                 onNewValue: value => {
                     if (!engine.isScratching(this.channel)) {
-                        this.setParameter("jog", value > 0x40 ? -1 : 1);
+                        this.setParameter("jog", value - 0x40);
                     }
                 }
             })
@@ -143,41 +146,40 @@ export class Deck {
 
         this.rateControl = new DeckFineMidiControl(this.index, "Tempo", {
             onValueChanged: value => {
-                this.setParameter("rate", value);
-                this.updateRateTakeoverLeds(value);
+                this.setParameter("rate", 1 - value);
             }
         });
         this.controls.push(this.rateControl);
 
         // Hotcues
-        const hotcueIndices = [0, 4];
-        hotcueIndices.forEach((padIndex, hotcueIndex) => {
+        const hotcueIndices = [0, 1, 2, 4];
+        hotcueIndices.forEach((hotcueIndex) => {
             const hotcueNumber = hotcueIndex + 1;
 
-            this.controls.push(new DeckButton(this.index, `Hotcue${padIndex}`, {
+            this.controls.push(new DeckButton(this.index, `Hotcue${hotcueIndex}`, {
                 onValueChanged: pressed => {
                     this.setValue(`hotcue_${hotcueNumber}_activate`, pressed);
                 }
             }));
-            this.controls.push(new DeckButton(this.index, `Hotcue${padIndex}Shifted`, {
+            this.controls.push(new DeckButton(this.index, `Hotcue${hotcueIndex}Shifted`, {
                 onPressed: () => {
                     this.activate(`hotcue_${hotcueNumber}_clear`);
                 }
             }));
 
-            this.makeLedConnection(`hotcue_${hotcueNumber}_enabled`, `Hotcue${padIndex}`, 0x5C); // green
-            this.makeLedConnection(`hotcue_${hotcueNumber}_enabled`, `Hotcue${padIndex}Shifted`, 0x60); // red
+            this.makeLedConnection(`hotcue_${hotcueNumber}_enabled`, `Hotcue${hotcueIndex}`, 0x5C); // green
+            this.makeLedConnection(`hotcue_${hotcueNumber}_enabled`, `Hotcue${hotcueIndex}Shifted`, 0x60); // red
         });
 
         // Load track
-        this.controls.push(new DeckButton(this.index, "Load", {
+        this.controls.push(new DeckButton(this.index, "TraxButton", {
             onPressed: () => {
                 this.activate("LoadSelectedTrack");
             }
         }));
 
         // Eject track
-        this.controls.push(new DeckButton(this.index, "LoadShifted", {
+        this.controls.push(new DeckButton(this.index, "TraxButtonShifted", {
             onPressed: () => {
                 if (!this.getValue("play")) this.activate("eject");
             }
@@ -189,11 +191,11 @@ export class Deck {
         // Leds
         this.makeLedConnection("play", "Play");
         this.makeLedConnection("pfl", "Pfl");
-        this.makeLedConnection("loop_enabled", "Hotcue1", 0x6C); // orange
+        this.makeLedConnection("loop_enabled", "LoopButton", 0x6C); // orange
 
         // Beatjump buttons
-        setLed(`${this.index}Hotcue6`, 0x63); // purple
-        setLed(`${this.index}Hotcue7`, 0x63);
+        setLed(`${this.index}BeatjumpBackward`, 0x63); // purple
+        setLed(`${this.index}BeatjumpForward`, 0x63);
 
         this.triggerConnections();
     }
@@ -202,12 +204,6 @@ export class Deck {
         for (const connection of this.connections) {
             connection.trigger();
         }
-    }
-
-    private updateRateTakeoverLeds(hardwareValue: number = this.rateControl.lastValue) {
-        const softwareValue = this.getParameter("rate");      
-        setLed(`${this.index}TempoLedUp`, +((softwareValue - hardwareValue) > tolerance));
-        setLed(`${this.index}TempoLedDown`, +((hardwareValue - softwareValue) > tolerance));
     }
 
     private modifyAndClampBeatjumpSize(factor: number) {
@@ -243,6 +239,7 @@ export class Deck {
     }
 
     private makeLedConnection(key: string, controlName: string, ledValue: number = 0x7F) {
+        return; // TODO
         const [status, midiNo] = MidiMapping.getMidiForControl(`${this.index}${controlName}`);
         this.connections.push(makeLedConnection(this.group, key, status, midiNo, ledValue));
     }
