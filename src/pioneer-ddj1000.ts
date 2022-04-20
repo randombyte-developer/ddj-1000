@@ -16,12 +16,9 @@ export function init(): void {
 
   decks = [1, 2].map((channel) => new Deck(channel));
 
-  let ignoreCrossfader = true;
-
   deckIndependentControls = [
     new FineMidiControl("Crossfader", {
       onValueChanged: (value) => {
-        if (ignoreCrossfader) return;
         engine.setParameter("[Master]", "crossfader", value);
       },
     }),
@@ -33,13 +30,6 @@ export function init(): void {
     new Button("LibraryView", {
       onPressed: () => {
         toggleControl("[Master]", "maximize_library");
-      },
-    }),
-    // Center and ignore crossfader
-    new DeckButton(0, "SyncShifted", {
-      onPressed: () => {
-        engine.setParameter("[Master]", "crossfader", 0.5);
-        ignoreCrossfader = !ignoreCrossfader;
       },
     }),
   ];
