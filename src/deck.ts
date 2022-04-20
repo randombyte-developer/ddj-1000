@@ -122,7 +122,7 @@ export class Deck {
                 onPressed: () => {                    
                     const alpha = 1.0 / 8;
                     const beta = alpha / 32;
-                    engine.scratchEnable(channel, 512, 33 + 1 / 3, alpha, beta, false);
+                    engine.scratchEnable(channel, 16384, 33 + 1 / 3, alpha, beta, false);
                 },
                 onReleased: () => {
                     engine.scratchDisable(channel, false);
@@ -138,7 +138,8 @@ export class Deck {
             new DeckMidiControl(this.index, "JogEncoderUntouched", false, {
                 onNewValue: value => {
                     if (!engine.isScratching(this.channel)) {
-                        this.setParameter("jog", value - 0x40);
+                        const centeredValue = value - 0x40
+                        this.setParameter("jog", centeredValue * 0.25);
                     }
                 }
             })
@@ -152,7 +153,7 @@ export class Deck {
         this.controls.push(this.rateControl);
 
         // Hotcues
-        const hotcueIndices = [0, 1, 2, 4];
+        const hotcueIndices = [0, 1, 2, 3];
         hotcueIndices.forEach((hotcueIndex) => {
             const hotcueNumber = hotcueIndex + 1;
 
@@ -167,8 +168,8 @@ export class Deck {
                 }
             }));
 
-            this.makeLedConnection(`hotcue_${hotcueNumber}_enabled`, `Hotcue${hotcueIndex}`, 0x5C); // green
-            this.makeLedConnection(`hotcue_${hotcueNumber}_enabled`, `Hotcue${hotcueIndex}Shifted`, 0x60); // red
+            this.makeLedConnection(`hotcue_${hotcueNumber}_enabled`, `Hotcue${hotcueIndex}`, 0x02); // blue
+            this.makeLedConnection(`hotcue_${hotcueNumber}_enabled`, `Hotcue${hotcueIndex}Shifted`, 0x29); // red
         });
 
         // Load track
@@ -191,11 +192,11 @@ export class Deck {
         // Leds
         this.makeLedConnection("play", "Play");
         this.makeLedConnection("pfl", "Pfl");
-        this.makeLedConnection("loop_enabled", "LoopButton", 0x6C); // orange
+        this.makeLedConnection("loop_enabled", "LoopButton");
 
         // Beatjump buttons
-        setLed(`${this.index}BeatjumpBackward`, 0x63); // purple
-        setLed(`${this.index}BeatjumpForward`, 0x63);
+        setLed(`${this.index}BeatjumpBackward`, 0x15); // green
+        setLed(`${this.index}BeatjumpForward`, 0x15);
 
         this.triggerConnections();
     }
@@ -239,7 +240,6 @@ export class Deck {
     }
 
     private makeLedConnection(key: string, controlName: string, ledValue: number = 0x7F) {
-        return; // TODO
         const [status, midiNo] = MidiMapping.getMidiForControl(`${this.index}${controlName}`);
         this.connections.push(makeLedConnection(this.group, key, status, midiNo, ledValue));
     }

@@ -1,6 +1,6 @@
 import { Button } from "@controls/button";
 import { Deck } from "@/deck";
-import { activate } from "@/utils";
+import { activate, toggleControl } from "@/utils";
 import { MidiControl } from "./controls/midiControl";
 import { MidiMapping } from "./midiMapping";
 import { DeckButton } from "./controls/deckButton";
@@ -28,6 +28,11 @@ export function init(): void {
     new Button("LibraryBack", {
       onPressed: () => {
         activate("[Library]", "MoveFocusForward");
+      },
+    }),
+    new Button("LibraryView", {
+      onPressed: () => {
+        toggleControl("[Master]", "maximize_library");
       },
     }),
     // Center and ignore crossfader
