@@ -60,7 +60,7 @@ export function init(): void {
     registerControls(deck.controls);
   }
 
-  // midi.sendSysexMsg() TODO request controls
+    midi.sendShortMsg(0x9F, 0x09, 0x7F)
 }
 
 export function midiInput(channel: number, midiNo: number, value: number, status: number, group: string): void {
@@ -68,7 +68,7 @@ export function midiInput(channel: number, midiNo: number, value: number, status
 
   const controlName = MidiMapping.mapping[status][midiNo];
   if (controlName == null) return;
-  engine.log(`${controlName}: ${value}`);
+  //engine.log(`${controlName}: ${value}`);
 
   for (const control of controls) {
     control.offerValue(controlName, value);

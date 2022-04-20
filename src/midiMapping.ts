@@ -39,6 +39,9 @@ export class MidiMapping {
       0x36: "0JogTouchButton",
       0x5e: "0SearchBackward",
       0x5f: "0SearchForward",
+      0x16: "0CrossfaderAssignLeft",
+      0x1d: "0CrossfaderAssignCenter",
+      0x18: "0CrossfaderAssignRight",
     },
     0xb0: {
       0x21: "0JogEncoderUntouched",
@@ -63,9 +66,6 @@ export class MidiMapping {
       0x03: "0Hotcue3",
       0x21: "0BeatjumpBackward",
       0x22: "0BeatjumpForward",
-      0x10: "0KillLow",
-      0x11: "0KillMid",
-      0x12: "0KillHigh",
     },
     0x98: {
       0x00: "0Hotcue0Shifted",
@@ -86,6 +86,9 @@ export class MidiMapping {
       0x36: "1JogTouchButton",
       0x5e: "1SearchBackward",
       0x5f: "1SearchForward",
+      0x16: "1CrossfaderAssignLeft",
+      0x1d: "1CrossfaderAssignCenter",
+      0x18: "1CrossfaderAssignRight",
     },
     0xb1: {
       0x21: "1JogEncoderUntouched",
@@ -110,9 +113,6 @@ export class MidiMapping {
       0x03: "1Hotcue3",
       0x21: "1BeatjumpBackward",
       0x22: "1BeatjumpForward",
-      0x10: "1KillLow",
-      0x11: "1KillMid",
-      0x12: "1KillHigh",
     },
     0x9a: {
       0x00: "1Hotcue0Shifted",
