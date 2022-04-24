@@ -24,7 +24,7 @@ export class MidiMapping {
       0x46: "0TraxButton",
       0x5d: "0TraxButtonShifted",
       0x47: "1TraxButton",
-      0x5e: "1TraxButtonShifted",
+      0x6d: "1TraxButtonShifted",
     },
     0x90: {
       0x0b: "0Play",
