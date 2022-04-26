@@ -131,7 +131,8 @@ export class Deck {
       new DeckMidiControl(this.index, "JogEncoderTouched", false, {
         onNewValue: (value) => {
           if (engine.isScratching(this.channel)) {
-            engine.scratchTick(this.channel, value - 0x40);
+            const centeredValue = value - 0x40;
+            engine.scratchTick(this.channel, centeredValue * 4);
           }
         },
       }),
@@ -216,6 +217,10 @@ export class Deck {
     // Beatjump buttons
     setLed(`${this.index}BeatjumpBackward`, 0x15); // green
     setLed(`${this.index}BeatjumpForward`, 0x15);
+
+    setLed(`${this.index}LoopIn`, 0x7F);
+    setLed(`${this.index}LoopOut`, 0x7F);
+    setLed(`${this.index}Sync`, 0x7F);
 
     this.triggerConnections();
   }
