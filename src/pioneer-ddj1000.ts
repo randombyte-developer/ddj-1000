@@ -1,10 +1,10 @@
-import { Button } from "@controls/button";
-import { Deck } from "@/deck";
-import { activate, toggleControl } from "@/utils";
+import { Button } from "./controls/button";
+
+import { activate, toggleControl } from "./utils";
 import { MidiControl } from "./controls/midiControl";
 import { MidiMapping } from "./midiMapping";
-import { DeckButton } from "./controls/deckButton";
 import { FineMidiControl } from "./controls/fineMidiControl";
+import { Deck } from "./deck";
 
 let decks: Deck[];
 let deckIndependentControls: MidiControl[];
@@ -50,7 +50,7 @@ export function init(): void {
     registerControls(deck.controls);
   }
 
-    midi.sendShortMsg(0x9F, 0x09, 0x7F)
+  midi.sendShortMsg(0x9f, 0x09, 0x7f);
 }
 
 export function midiInput(channel: number, midiNo: number, value: number, status: number, group: string): void {

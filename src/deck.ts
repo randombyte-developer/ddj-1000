@@ -1,8 +1,8 @@
-import { MidiControl } from "@controls/midiControl";
-import { DeckMidiControl } from "@controls/deckMidiControl";
-import { DeckFineMidiControl } from "@controls/deckFineMidiControl";
-import { DeckButton } from "@controls/deckButton";
-import { toggleControl, activate, makeLedConnection, clamp, setLed } from "@/utils";
+import { MidiControl } from "./controls/midiControl";
+import { DeckMidiControl } from "./controls/deckMidiControl";
+import { DeckFineMidiControl } from "./controls/deckFineMidiControl";
+import { DeckButton } from "./controls/deckButton";
+import { toggleControl, activate, makeLedConnection, clamp, setLed } from "./utils";
 import { MidiMapping } from "./midiMapping";
 
 export class Deck {
