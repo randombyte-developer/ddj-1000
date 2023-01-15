@@ -4,7 +4,9 @@
   "author": "Sven Rahn",
   "license": "GPL-2.0",
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "build": "rollup -c"
+  },
   "devDependencies": {
     "rollup": "^3.10.0",
     "rollup-plugin-typescript2": "^0.34.1",
