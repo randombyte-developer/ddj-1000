@@ -10,6 +10,7 @@ export default {
     plugins: [
         rollupPluginTypeScript({
             tsconfig: "./tsconfig.json",
+            clean: true
         }),
     ],
 };
