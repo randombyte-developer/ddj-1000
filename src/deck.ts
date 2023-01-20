@@ -140,7 +140,6 @@ export class Deck {
         onNewValue: (value) => {
           if (!engine.isScratching(this.channel)) {
             const centeredValue = value - 0x40;
-            engine.log(`jog untouched: ${centeredValue}, ${centeredValue * 0.1}`);
             this.setParameter("jog", centeredValue * 0.1);
           }
         },
