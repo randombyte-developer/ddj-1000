@@ -132,7 +132,7 @@ export class Deck {
         onNewValue: (value) => {
           if (engine.isScratching(this.channel)) {
             const centeredValue = value - 0x40;
-            engine.scratchTick(this.channel, centeredValue * 4);
+            engine.scratchTick(this.channel, centeredValue * 3);
           }
         },
       }),
@@ -140,7 +140,8 @@ export class Deck {
         onNewValue: (value) => {
           if (!engine.isScratching(this.channel)) {
             const centeredValue = value - 0x40;
-            this.setParameter("jog", centeredValue * 0.25);
+            engine.log(`jog untouched: ${centeredValue}, ${centeredValue * 0.1}`);
+            this.setParameter("jog", centeredValue * 0.1);
           }
         },
       }),
@@ -218,9 +219,9 @@ export class Deck {
     setLed(`${this.index}BeatjumpBackward`, 0x15); // green
     setLed(`${this.index}BeatjumpForward`, 0x15);
 
-    setLed(`${this.index}LoopIn`, 0x7F);
-    setLed(`${this.index}LoopOut`, 0x7F);
-    setLed(`${this.index}Sync`, 0x7F);
+    setLed(`${this.index}LoopIn`, 0x7f);
+    setLed(`${this.index}LoopOut`, 0x7f);
+    setLed(`${this.index}Sync`, 0x7f);
 
     this.triggerConnections();
   }
