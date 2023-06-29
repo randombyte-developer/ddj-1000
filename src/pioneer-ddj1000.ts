@@ -16,6 +16,8 @@ export function init(): void {
 
   decks = [1, 2].map((channel) => new Deck(channel));
 
+  let tracklistSelected = false;
+
   deckIndependentControls = [
     new FineMidiControl("Crossfader", {
       onValueChanged: (value) => {
@@ -24,7 +26,7 @@ export function init(): void {
     }),
     new Button("LibraryBack", {
       onPressed: () => {
-        activate("[Library]", "MoveFocusForward");
+        tracklistSelected = !tracklistSelected;
       },
     }),
     new Button("LibraryView", {
@@ -38,7 +40,11 @@ export function init(): void {
     return new MidiControl(name, false, {
       onNewValue: (value) => {
         const direction = value > 0x40 ? value - 0x80 : value;
-        engine.setValue("[Library]", "MoveVertical", direction * factor);
+        if (tracklistSelected) {
+          engine.setValue("[Playlist]", "SelectTrackKnob", direction * factor);
+        } else {
+          engine.setValue("[Playlist]", "SelectPlaylist", direction * factor);
+        }
       },
     });
   }
